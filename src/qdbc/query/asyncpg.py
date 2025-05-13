@@ -32,7 +32,7 @@ async def benchmark(
 
     e = time.time_ns()
 
-    print(f"Object: {obj}")
+    # print(f"Object: {obj}")
 
     elapsed = (e - s) / 1_000_000_000
     print(f"Elapsed time: {elapsed:.2f} seconds processing {len(rows)} rows")

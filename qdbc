@@ -1,0 +1,2 @@
+#!/bin/bash
+uv --directory src run -m qdbc "$@"

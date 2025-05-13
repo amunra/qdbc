@@ -1,20 +1,7 @@
 import asyncpg
 import time
 
-
-def syncify(func):
-    """
-    Decorator to convert an asynchronous function to a synchronous one.
-    """
-    import asyncio
-    import functools
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(func(*args, **kwargs))
-    
-    return wrapper
-
+from .utils import syncify
 
 @syncify
 async def benchmark(
@@ -23,6 +10,9 @@ async def benchmark(
     user: str = 'admin',
     password: str = 'quest'
 ):
+    """
+    Benchmark the asyncpg library by fetching data from QuestDB.
+    """
     conn = await asyncpg.connect(
         host=host,
         port=pgport,
@@ -35,11 +25,14 @@ async def benchmark(
     s = time.time_ns()
  
     rows = await conn.fetch("SELECT * FROM cpu")
-    usage_user = 0
+    obj = None
     for row in rows:
-        usage_user += row['usage_user']
+        for cell in row.values():
+            obj = cell
 
     e = time.time_ns()
+
+    print(f"Object: {obj}")
 
     elapsed = (e - s) / 1_000_000_000
     print(f"Elapsed time: {elapsed:.2f} seconds processing {len(rows)} rows")
